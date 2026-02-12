@@ -1,0 +1,98 @@
+# Kubernetes Controller Survey - Target Repositories
+# Format: one GitHub URL per line
+# Lines starting with # are comments
+
+# ============================================================================
+# CNCF Graduated/Incubating Projects
+# ============================================================================
+
+# DNS management
+https://github.com/kubernetes-sigs/external-dns
+
+# Certificate management
+https://github.com/cert-manager/cert-manager
+
+# GitOps
+https://github.com/argoproj/argo-cd
+https://github.com/fluxcd/flux2
+https://github.com/fluxcd/source-controller
+https://github.com/fluxcd/kustomize-controller
+https://github.com/fluxcd/helm-controller
+
+# Multi-cluster/Infrastructure
+https://github.com/crossplane/crossplane
+https://github.com/kubernetes-sigs/cluster-api
+
+# Autoscaling
+https://github.com/kedacore/keda
+https://github.com/kubernetes/autoscaler
+
+# Service Mesh
+https://github.com/istio/istio
+https://github.com/linkerd/linkerd2
+
+# Monitoring
+https://github.com/prometheus-operator/prometheus-operator
+
+# Messaging
+https://github.com/strimzi/strimzi-kafka-operator
+
+# Storage
+https://github.com/rook/rook
+https://github.com/longhorn/longhorn-manager
+
+# ============================================================================
+# Gateway/Ingress Controllers
+# ============================================================================
+
+https://github.com/kubernetes-sigs/gateway-api
+https://github.com/envoyproxy/gateway
+https://github.com/kubernetes/ingress-nginx
+https://github.com/kubernetes-sigs/aws-load-balancer-controller
+https://github.com/traefik/traefik
+
+# ============================================================================
+# Gateway API Implementations
+# ============================================================================
+https://github.com/nginxinc/nginx-gateway-fabric
+https://github.com/projectcontour/contour
+https://github.com/Kong/gateway-operator
+https://github.com/solo-io/gloo
+https://github.com/emissary-ingress/emissary
+https://github.com/apache/apisix-ingress-controller
+https://github.com/haproxytech/kubernetes-ingress
+https://github.com/flomesh-io/fsm
+
+# ============================================================================
+# Operator Frameworks
+# ============================================================================
+
+https://github.com/operator-framework/operator-sdk
+
+# ============================================================================
+# Other Notable Operators (high GitHub stars)
+# ============================================================================
+
+# Database operators
+https://github.com/zalando/postgres-operator
+https://github.com/CrunchyData/postgres-operator
+https://github.com/percona/percona-server-mongodb-operator
+
+# Application deployment
+https://github.com/knative/serving
+https://github.com/tektoncd/pipeline
+
+# Security
+https://github.com/cert-manager/trust-manager
+https://github.com/external-secrets/external-secrets
+
+# Networking
+https://github.com/cilium/cilium
+https://github.com/metallb/metallb
+
+# Backup
+https://github.com/vmware-tanzu/velero
+
+# Policy
+https://github.com/kyverno/kyverno
+https://github.com/open-policy-agent/gatekeeper
