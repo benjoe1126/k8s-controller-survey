@@ -3,7 +3,6 @@ package analyzer
 import (
 	"fmt"
 	"go/token"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -93,15 +92,11 @@ func (a *Analyzer) loadPackages(repoPath string) ([]*packages.Package, error) {
 	// Filter out packages with errors (but still return what we can).
 	var validPkgs []*packages.Package
 	for _, pkg := range pkgs {
-		if len(pkg.Errors) > 0 {
+		if len(pkg.Errors) > 0 && len(pkg.Syntax) == 0 {
 			if a.verbose {
 				for _, e := range pkg.Errors {
 					log.Printf("Package error in %s: %v", pkg.PkgPath, e)
 				}
-			}
-			// Still include the package if it has syntax.
-			if len(pkg.Syntax) > 0 {
-				validPkgs = append(validPkgs, pkg)
 			}
 		} else {
 			validPkgs = append(validPkgs, pkg)
@@ -129,7 +124,7 @@ func (a *Analyzer) analyzeReconcileFunc(
 	}
 
 	// Read file data for snippet extraction.
-	fileData, err := ioutil.ReadFile(filePath)
+	fileData, err := os.ReadFile(filePath)
 	if err != nil {
 		if a.verbose {
 			log.Printf("Warning: could not read file %s: %v", filePath, err)

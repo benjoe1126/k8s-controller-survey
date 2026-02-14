@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/rg0now/k8s-controller-survey/pkg/analyzer"
 	"github.com/rg0now/k8s-controller-survey/pkg/models"
@@ -38,6 +39,7 @@ reconciliation patterns.`,
 func analyzeCmd() *cobra.Command {
 	var (
 		reposFile  string
+		numWorkers int32
 		repoURLs   []string
 		outputFile string
 		workDir    string
@@ -104,9 +106,11 @@ Examples:
 
 			// Analyze each repo.
 			var allReconcilers []models.Reconciler
+			wg := &sync.WaitGroup{}
+			wg.Add(len(repos))
+			mutex := &sync.Mutex{}
+			signalChan := make(chan bool, numWorkers)
 			for _, repo := range repos {
-				log.Printf("Processing repository: %s", repo.URL)
-
 				// Clone repository.
 				localPath, err := cloneRepo(repo.URL, workDir, verbose)
 				if err != nil {
@@ -114,31 +118,41 @@ Examples:
 					continue
 				}
 				repo.LocalPath = localPath
-
+				// "Put a foot in the door", aka write to the channel, will block if channel is full
+				signalChan <- false
+				log.Printf("Processing repository: %s", repo.URL)
 				// Analyze.
-				reconcilers, err := a.AnalyzeRepo(repo)
-				if err != nil {
-					log.Printf("Error analyzing %s: %v", repo.URL, err)
-					continue
-				}
-
-				log.Printf("Found %d reconcilers in %s", len(reconcilers), repo.URL)
-
-				// Write results.
-				if err := w.WriteReconcilers(reconcilers); err != nil {
-					log.Printf("Error writing results: %v", err)
-				}
-
-				allReconcilers = append(allReconcilers, reconcilers...)
-
-				// Clean up clone if not keeping.
-				if !keepClones {
-					if err := os.RemoveAll(localPath); err != nil {
-						log.Printf("Warning: failed to remove %s: %v", localPath, err)
+				go func() {
+					defer func() {
+						wg.Done()
+						// Read out a value of the channel, freeing up a space in the buffer and allowing another repo to be analyzed
+						<-signalChan
+					}()
+					reconcilers, err := a.AnalyzeRepo(repo)
+					if err != nil {
+						log.Printf("Error analyzing %s: %v", repo.URL, err)
+						return
 					}
-				}
-			}
 
+					log.Printf("Found %d reconcilers in %s", len(reconcilers), repo.URL)
+
+					// Write results.
+					if err := w.WriteReconcilers(reconcilers); err != nil {
+						log.Printf("Error writing results: %v", err)
+					}
+					mutex.Lock() // Just in case, wait times are so divergent it won't really matter
+					allReconcilers = append(allReconcilers, reconcilers...)
+					mutex.Unlock()
+
+					// Clean up clone if not keeping.
+					if !keepClones {
+						if err := os.RemoveAll(localPath); err != nil {
+							log.Printf("Warning: failed to remove %s: %v", localPath, err)
+						}
+					}
+				}()
+			}
+			wg.Wait()
 			// Print summary.
 			summary := output.GenerateSummary(allReconcilers, 10)
 			output.PrintSummary(os.Stderr, summary)
@@ -153,6 +167,7 @@ Examples:
 	cmd.Flags().StringVar(&workDir, "work-dir", "./repos", "Directory for cloning repos")
 	cmd.Flags().BoolVar(&keepClones, "keep-clones", false, "Keep cloned repos after analysis")
 	cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Verbose output")
+	cmd.Flags().Int32Var(&numWorkers, "num-workers", 3, "Number of workers")
 
 	return cmd
 }

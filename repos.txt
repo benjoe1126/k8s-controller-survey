@@ -31,11 +31,13 @@ https://github.com/kubernetes/autoscaler
 https://github.com/istio/istio
 https://github.com/linkerd/linkerd2
 
-# Monitoring
+# Observability
 https://github.com/prometheus-operator/prometheus-operator
+https://github.com/fluent/fluent-operator
 
 # Messaging
 https://github.com/strimzi/strimzi-kafka-operator
+https://github.com/rabbitmq/cluster-operator
 
 # Storage
 https://github.com/rook/rook
@@ -77,6 +79,8 @@ https://github.com/operator-framework/operator-sdk
 https://github.com/zalando/postgres-operator
 https://github.com/CrunchyData/postgres-operator
 https://github.com/percona/percona-server-mongodb-operator
+https://github.com/cloudnative-pg/cloudnative-pg
+https://github.com/mariadb-operator/mariadb-operator
 
 # Application deployment
 https://github.com/knative/serving
@@ -85,10 +89,12 @@ https://github.com/tektoncd/pipeline
 # Security
 https://github.com/cert-manager/trust-manager
 https://github.com/external-secrets/external-secrets
+https://github.com/bitnami-labs/sealed-secrets
 
 # Networking
 https://github.com/cilium/cilium
 https://github.com/metallb/metallb
+https://github.com/projectcalico/calico
 
 # Backup
 https://github.com/vmware-tanzu/velero
